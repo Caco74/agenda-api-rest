@@ -1,17 +1,17 @@
 package com.agenda.api.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "contactos", uniqueConstraints = {@UniqueConstraint(columnNames = {"telefono"})})
 public class Contacto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String nombre;
+    @Column(nullable = false)
     private String telefono;
 
     public Contacto() {}
