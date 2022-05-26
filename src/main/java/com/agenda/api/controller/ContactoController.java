@@ -1,18 +1,14 @@
 package com.agenda.api.controller;
 
 import com.agenda.api.dto.ContactoDTO;
-import com.agenda.api.entity.Contacto;
 import com.agenda.api.service.IContactoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/contactos")
@@ -34,12 +30,41 @@ public class ContactoController {
     }
 
     @PostMapping
-    public ResponseEntity<ContactoDTO> guardarContacto(@RequestBody ContactoDTO contacto) {
-        if (contacto.getId() != null) {
+    public ResponseEntity<ContactoDTO> guardarContacto(@RequestBody ContactoDTO contactoDto) {
+        if (contactoDto.getId() != null) {
+            log.warn("No puedes crear un contacto con id.");
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(service.crearContacto(contacto));
+        if (contactoDto.getNombre() == null || contactoDto.getNombre().isEmpty()) {
+            log.warn("No puedes crear un contacto sin nombre.");
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (contactoDto.getNombre().length() <= 3 || contactoDto.getNombre().length() >= 20) {
+            log.warn("El nombre de contacto debe tener mínimo 3 caracteres");
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(service.crearContacto(contactoDto));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ContactoDTO> obtenerPorId(@PathVariable Long id) {
+
+        return ResponseEntity.ok(service.obtenerContactoPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ContactoDTO> actualizarContacto(@RequestBody ContactoDTO contactoDto, @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.actualizarContacto(contactoDto, id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+        service.eliminarContacto(id);
+        return new ResponseEntity<>("Contacto eliminado correctamente.", HttpStatus.OK);
     }
 
 }
