@@ -1,13 +1,11 @@
 package com.agenda.api.service;
 
 import com.agenda.api.dto.ContactoDTO;
-import com.agenda.api.entity.Contacto;
-
-import java.util.List;
+import com.agenda.api.dto.ContactoRespuesta;
 
 public interface IContactoService {
 
-    public List<ContactoDTO> obtenerTodosLosContactos();
+    public ContactoRespuesta obtenerTodosLosContactos(int numeroPag, int tamanioPag, String ordenarPor, String sortDir);
     public ContactoDTO crearContacto(ContactoDTO contacto);
     public ContactoDTO obtenerContactoPorId(Long id);
 
