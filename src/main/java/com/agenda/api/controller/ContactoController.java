@@ -2,6 +2,7 @@ package com.agenda.api.controller;
 
 import com.agenda.api.dto.ContactoDTO;
 import com.agenda.api.dto.ContactoRespuesta;
+import com.agenda.api.entity.Contacto;
 import com.agenda.api.service.IContactoService;
 import com.agenda.api.utils.AppConstantes;
 import org.slf4j.Logger;
@@ -9,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -71,5 +74,17 @@ public class ContactoController {
         service.eliminarContacto(id);
         return new ResponseEntity<>("Contacto eliminado correctamente.", HttpStatus.OK);
     }
+
+//    @GetMapping("/buscar/{nombre}")
+//    public ResponseEntity<List<ContactoDTO>> buscarPorNombre(@RequestParam(value = "nombre", required = false) String nombre) {
+//        List<ContactoDTO> contactoDto = service.buscarPorNombre(nombre);
+//        return ResponseEntity.ok(contactoDto);
+//    }
+
+    @GetMapping("/busqueda")
+    public ResponseEntity<List<ContactoDTO>> buscarPorNombre(@RequestParam String nombre) {
+        return ResponseEntity.ok(service.buscarPorNombre(nombre));
+    }
+
 
 }

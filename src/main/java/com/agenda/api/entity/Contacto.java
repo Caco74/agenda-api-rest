@@ -3,7 +3,7 @@ package com.agenda.api.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "contactos", uniqueConstraints = {@UniqueConstraint(columnNames = {"telefono"})})
+@Table(name = "contactos")
 public class Contacto {
 
     @Id

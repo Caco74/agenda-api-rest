@@ -10,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,11 +60,6 @@ public class ContactoServiceImpl implements IContactoService{
         contactoRespuesta.setUltima(contactos.isLast());
 
         return contactoRespuesta;
-
-
-
-
-
     }
 
     @Override
@@ -84,7 +77,6 @@ public class ContactoServiceImpl implements IContactoService{
         contacto.setNombre(contactoDto.getNombre());
         contacto.setTelefono(contactoDto.getTelefono());
 
-
         return mapearDTO(repository.save(contacto));
     }
 
@@ -93,6 +85,18 @@ public class ContactoServiceImpl implements IContactoService{
         Contacto contacto = repository.findById(id)
                 .orElseThrow(() -> new ResourseNotFoundException("Contacto","id",id));
         repository.delete(contacto);
+    }
+
+    @Override
+    public List<ContactoDTO> buscarPorNombre(String name) {
+
+            //List<Contacto> contactbuscado = repository.findByNombreContainingIgnoreCase(name);
+            //List<Contacto> contactbuscado = repository.findByNombreContainsIgnoreCase(name);
+            List<Contacto> contactbuscado = repository.findByNombreIsContainingIgnoreCase(name);
+
+            return contactbuscado.stream()
+                    .map(this::mapearDTO)
+                    .collect(Collectors.toList() );
     }
 
     // Convertir de Entidad a DTO
