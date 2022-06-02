@@ -46,6 +46,7 @@ public class Contacto {
 
     public void setTelefono(String telefono) {
 
+
         int prefTresDigitos = Integer.parseInt(telefono.substring(0,3));
 
         if (telefono.charAt(0) == '1') {
