@@ -46,7 +46,16 @@ public class Contacto {
 
     public void setTelefono(String telefono) {
 
+        boolean esNumero = telefono.chars()
+                .allMatch( Character::isDigit );
 
+        if (!esNumero) {
+            telefono = formatearNumero(telefono);
+        }
+        guardar(telefono);
+    }
+
+    public void guardar(String telefono) {
         int prefTresDigitos = Integer.parseInt(telefono.substring(0,3));
 
         if (telefono.charAt(0) == '1') {
@@ -86,4 +95,71 @@ public class Contacto {
     public boolean esCiudadGrande(int[] prefijos, int codigoDeArea){
         return IntStream.of(prefijos).anyMatch(p -> p == codigoDeArea);
     }
+
+    public static String formatearNumero(String telefono) {
+        StringBuilder numeroDecodificado = new StringBuilder();
+
+        for (int i = 0; i < telefono.length(); i++) {
+            if (!Character.isDigit(telefono.charAt(i))) {
+                numeroDecodificado.append(decodificarLetras(String.valueOf(telefono.charAt(i))));
+            } else {
+                numeroDecodificado.append(telefono.charAt(i));
+            }
+        }
+
+        return numeroDecodificado.toString();
+    }
+
+    public static String decodificarLetras(String letra) {//throws IllegalArgumentException
+        switch (letra) {
+            case "a":
+            case "b":
+            case "c":
+                letra = "2";
+                break;
+            case "d":
+            case "e":
+            case "f":
+                letra = "3";
+                break;
+            case "g":
+            case "h":
+            case "i":
+                letra = "4";
+                break;
+            case "j":
+            case "k":
+            case "l":
+                letra = "5";
+                break;
+            case "m":
+            case "n":
+            case "o":
+                letra = "6";
+                break;
+            case "p":
+            case "q":
+            case "r":
+            case "s":
+                letra = "7";
+                break;
+            case "t":
+            case "u":
+            case "v":
+                letra = "8";
+                break;
+            case "w":
+            case "x":
+            case "y":
+            case "z":
+                letra = "9";
+                break;
+            default:
+                System.out.println("Caracter desconocido.");
+                //throw new IllegalArgumentException("No permitido")
+        }
+
+        return letra;
+    }
+
 }
