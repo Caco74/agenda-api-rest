@@ -28,8 +28,7 @@ public class ContactoController {
 
     @GetMapping("/v1")
     public ResponseEntity<List<ContactoDTO>> listarContactos() {
-        List<ContactoDTO> list = service.obtenerTodosLosContactosV1();
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(service.obtenerTodosLosContactosV1());
     }
     @GetMapping("/v2")
     public ResponseEntity<ContactoRespuesta> listarContactos(
@@ -37,8 +36,7 @@ public class ContactoController {
             @RequestParam(value="tamanioPag", defaultValue = AppConstantes.TAMANIO_DE_PAGINA_POR_DEFECTO, required = false) int tamanioPag,
             @RequestParam(value="sortBy", defaultValue = AppConstantes.ORDENAR_POR_DEFECTO, required = false) String ordenarPor,
             @RequestParam(value="sortDir", defaultValue = AppConstantes.ORDENAR_DIRECCION_POR_DEFECTO, required = false) String sortDir) {
-        ContactoRespuesta list = service.obtenerTodosLosContactosV2(numeroPag, tamanioPag, ordenarPor, sortDir);
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(service.obtenerTodosLosContactosV2(numeroPag, tamanioPag, ordenarPor, sortDir));
     }
 
     @GetMapping("/v1/{id}")
@@ -67,9 +65,9 @@ public class ContactoController {
     }
 
     @DeleteMapping("/v1/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) throws ContactoIdNotFoundException {
-        service.eliminarContacto(id);
-        return new ResponseEntity<>("Contacto eliminado correctamente.", HttpStatus.OK);
+    public ResponseEntity<ContactoDTO> eliminar(@PathVariable Long id) throws ContactoIdNotFoundException {
+        service.eliminarContacto(id);   
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/v1/busqueda")
