@@ -2,9 +2,10 @@ package com.agenda.api.controller;
 
 import com.agenda.api.dto.ContactoDTO;
 import com.agenda.api.dto.ContactoRespuesta;
-import com.agenda.api.entity.Contacto;
+import com.agenda.api.recursos.excepciones.ContactoIdNotFoundException;
+import com.agenda.api.recursos.excepciones.ContactoInvalidDataException;
 import com.agenda.api.service.IContactoService;
-import com.agenda.api.utils.AppConstantes;
+import com.agenda.api.recursos.utils.AppConstantes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,6 @@ import java.util.List;
 public class ContactoController {
 
     private final Logger log = LoggerFactory.getLogger(ContactoController.class);
-
 
     private IContactoService service;
 
@@ -38,39 +38,22 @@ public class ContactoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ContactoDTO> obtenerPorId(@PathVariable Long id) {
-
+    public ResponseEntity<ContactoDTO> obtenerPorId(@PathVariable Long id) throws ContactoIdNotFoundException {
         return ResponseEntity.ok(service.obtenerContactoPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<ContactoDTO> guardarContacto(@RequestBody ContactoDTO contactoDto) {
-        if (contactoDto.getId() != null) {
-            log.warn("No puedes crear un contacto con id.");
-            return ResponseEntity.badRequest().build();
-        }
-
-        if (contactoDto.getNombre() == null || contactoDto.getNombre().isEmpty()) {
-            log.warn("No puedes crear un contacto sin nombre.");
-            return ResponseEntity.badRequest().build();
-        }
-
-        if (contactoDto.getNombre().length() <= 3 || contactoDto.getNombre().length() >= 20) {
-            log.warn("El nombre de contacto debe tener mínimo 3 caracteres");
-            return ResponseEntity.badRequest().build();
-        }
-
+    public ResponseEntity<ContactoDTO> guardarContacto(@RequestBody ContactoDTO contactoDto) throws ContactoInvalidDataException {
         return ResponseEntity.ok(service.crearContacto(contactoDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ContactoDTO> actualizarContacto(@RequestBody ContactoDTO contactoDto, @PathVariable Long id) {
-
+    public ResponseEntity<ContactoDTO> actualizarContacto(@RequestBody ContactoDTO contactoDto, @PathVariable Long id) throws ContactoIdNotFoundException, ContactoInvalidDataException {
         return ResponseEntity.ok(service.actualizarContacto(contactoDto, id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+    public ResponseEntity<String> eliminar(@PathVariable Long id) throws ContactoIdNotFoundException {
         service.eliminarContacto(id);
         return new ResponseEntity<>("Contacto eliminado correctamente.", HttpStatus.OK);
     }

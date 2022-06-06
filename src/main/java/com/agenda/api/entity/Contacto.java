@@ -1,6 +1,7 @@
 package com.agenda.api.entity;
 
-import com.agenda.api.utils.AppConstantes;
+import com.agenda.api.recursos.excepciones.ContactoInvalidDataException;
+import com.agenda.api.recursos.utils.AppConstantes;
 
 import javax.persistence.*;
 
@@ -44,26 +45,23 @@ public class Contacto {
         return telefono;
     }
 
-    public void setTelefono(String telefono) {
-
-        boolean esNumero = telefono.chars()
-                .allMatch( Character::isDigit );
-
-        if (!esNumero) {
-            telefono = formatearNumero(telefono);
-        }
+    public void setTelefono(String telefono) throws ContactoInvalidDataException {
         guardar(telefono);
     }
 
-    public void guardar(String telefono) {
-        int prefTresDigitos = Integer.parseInt(telefono.substring(0,3));
+    public void guardar(String telefono) throws ContactoInvalidDataException {
+        String buenosAires = telefono.substring(0,2);
+        String codigoCiudadGrande = telefono.substring(0,3);
+        String codigoRestoCiudades = telefono.substring(0,4);
 
-        if (telefono.charAt(0) == '1') {
+        if (buenosAires.equals("11")) {
             this.telefono = "0" + formatoTelefono(telefono, 2, 7);
-        } else if (esCiudadGrande(AppConstantes.CIUDADES_GRANDES, prefTresDigitos)){
+        } else if (esCiudadGrande(AppConstantes.CIUDADES_GRANDES, codigoCiudadGrande)){
             this.telefono = "0" + formatoTelefono(telefono, 3, 7);
-        } else {
+        } else if (esRestoCiudades(AppConstantes.RESTO_CIUDADES, codigoRestoCiudades)){
             this.telefono = "0" + formatoTelefono(telefono, 4, 8);
+        } else {
+            throw new ContactoInvalidDataException("Código de área incorrecto.");
         }
     }
 
@@ -92,74 +90,12 @@ public class Contacto {
         return numero.toString();
     }
 
-    public boolean esCiudadGrande(int[] prefijos, int codigoDeArea){
-        return IntStream.of(prefijos).anyMatch(p -> p == codigoDeArea);
+    public boolean esCiudadGrande(int[] prefijos, String codigoDeArea){
+        return IntStream.of(prefijos).anyMatch(p -> p == Integer.parseInt(codigoDeArea));
     }
 
-    public static String formatearNumero(String telefono) {
-        StringBuilder numeroDecodificado = new StringBuilder();
-
-        for (int i = 0; i < telefono.length(); i++) {
-            if (!Character.isDigit(telefono.charAt(i))) {
-                numeroDecodificado.append(decodificarLetras(String.valueOf(telefono.charAt(i))));
-            } else {
-                numeroDecodificado.append(telefono.charAt(i));
-            }
-        }
-
-        return numeroDecodificado.toString();
-    }
-
-    public static String decodificarLetras(String letra) {//throws IllegalArgumentException
-        switch (letra) {
-            case "a":
-            case "b":
-            case "c":
-                letra = "2";
-                break;
-            case "d":
-            case "e":
-            case "f":
-                letra = "3";
-                break;
-            case "g":
-            case "h":
-            case "i":
-                letra = "4";
-                break;
-            case "j":
-            case "k":
-            case "l":
-                letra = "5";
-                break;
-            case "m":
-            case "n":
-            case "o":
-                letra = "6";
-                break;
-            case "p":
-            case "q":
-            case "r":
-            case "s":
-                letra = "7";
-                break;
-            case "t":
-            case "u":
-            case "v":
-                letra = "8";
-                break;
-            case "w":
-            case "x":
-            case "y":
-            case "z":
-                letra = "9";
-                break;
-            default:
-                System.out.println("Caracter desconocido.");
-                //throw new IllegalArgumentException("No permitido")
-        }
-
-        return letra;
+    public boolean esRestoCiudades(int[] prefijos, String codigoDeArea) {
+        return IntStream.of(prefijos).anyMatch(p -> p == Integer.parseInt(codigoDeArea));
     }
 
 }
