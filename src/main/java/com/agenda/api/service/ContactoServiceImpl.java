@@ -215,7 +215,7 @@ public class ContactoServiceImpl implements IContactoService{
             contactoDto.setTelefono("0" + formatoTelefono(numero, 3, 7));
         } else if (esCiudadGrandeORestoCiudades(AppConstantes.RESTO_CIUDADES, codigoRestoCiudades)){
             log.warn("Es resto ciudades.");
-            contactoDto.setTelefono("0" + formatoTelefono(numero, 4, 7));
+            contactoDto.setTelefono("0" + formatoTelefono(numero, 4, 8));
         } else {
             throw new ContactoInvalidDataException("Código de área incorrecto.");
         }
